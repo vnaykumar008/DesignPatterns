@@ -10,7 +10,18 @@ namespace DesignPatterns
     {
         static void Main(string[] args)
         {
-            
+            IClock iocClock = IoC.Bind<IClock>(typeof(MyClock));
+            DependencyInjection instance1 = new DependencyInjection(iocClock);
+            DateTime dob = new DateTime(2012, 12, 12, 0, 0, 0);
+            bool result = instance1.IsValid(dob);
+            Console.WriteLine("Result is:" + result);
+
+            IClock manualClock = new MyClock();
+            DependencyInjection instance2 = new DependencyInjection(manualClock);
+            result = instance2.IsValid(dob);
+            Console.WriteLine("Result is:" + result);
+
+            Console.ReadLine();
         }
     }
 }
