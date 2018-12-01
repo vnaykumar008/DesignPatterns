@@ -8,17 +8,27 @@ namespace DesignPatterns
 {
     public static class IoC
     {
-        //private static Dictionary<Type, Func<Object>> container;  
-        public static T Bind<T>(Type instanceType)
+        private static Dictionary<Type, object> container = 
+            new Dictionary<Type, object>(); 
+        
+        public static void Map<T>(Type instanceType)
         {
+            //var parameters = instanceType.GetConstructors()
+            //    .Select(p => ResolveType(p.GetType())).ToArray();
             T a = (T)Activator.CreateInstance(instanceType);
-            return a;
-            //container.Add(instanceType, () => a);
+            container.Add(typeof(T), a);
+        }        
+
+        public static T Resolve<T>(params Type[] paramTypes)
+        {
+            object[] parameters = paramTypes.Select(p => container.ContainsKey(p) ? container[p] : ResolveType(p)).ToArray();
+            
+            return (T)Activator.CreateInstance(typeof(T), parameters);
         }
 
-        //public static object Resolve(Type type)
-        //{
-        //    return container[type].Invoke();
-        //}
+        private static object ResolveType(Type p)
+        {
+            return Activator.CreateInstance(p);
+        }
     }
 }
